@@ -348,8 +348,8 @@ export default function GlobalSearchBar({ onNavigate, darkMode = false }) {
             if (hasQuery) setIsOpen(true);
           }}
           onKeyDown={handleKeyDown}
-          placeholder="Search jobs, candidates, users, invoices (Cmd + K)..."
-          className={`w-[22rem] xl:w-[30rem] rounded-2xl pl-9 pr-9 py-2.5 text-xs focus:outline-hidden transition-colors ${
+          placeholder="Search... (Cmd + K)"
+          className={`w-28 xs:w-40 sm:w-60 md:w-72 lg:w-[22rem] xl:w-[28rem] rounded-2xl pl-9 pr-9 py-2 text-xs focus:outline-hidden transition-all ${
             darkMode
               ? "bg-[#161B22] border border-[#30363D] text-white placeholder:text-slate-500 focus:border-amber-500"
               : "bg-slate-50 border border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-slate-400"
@@ -378,7 +378,7 @@ export default function GlobalSearchBar({ onNavigate, darkMode = false }) {
       {isOpen && hasQuery && (
         <div
           ref={listRef}
-          className={`absolute top-full left-0 right-0 mt-2 z-50 rounded-2xl border shadow-2xl overflow-hidden max-h-[30rem] overflow-y-auto custom-scrollbar animate-in fade-in-50 zoom-in-95 duration-100 ${
+          className={`absolute top-full right-0 sm:left-0 sm:right-auto w-[calc(100vw-2rem)] sm:w-[380px] md:w-full mt-2 z-50 rounded-2xl border shadow-2xl overflow-hidden max-h-[70vh] sm:max-h-[30rem] overflow-y-auto custom-scrollbar animate-in fade-in-50 zoom-in-95 duration-100 ${
             darkMode
               ? "bg-[#161B22] border-[#30363D] text-slate-200"
               : "bg-white border-slate-200 text-slate-800"

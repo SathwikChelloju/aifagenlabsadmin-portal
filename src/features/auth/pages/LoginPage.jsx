@@ -122,13 +122,13 @@ export default function LoginPage({ onLoginSuccess }) {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-[#080C14] text-slate-100 font-sans selection:bg-orange-500 selection:text-white relative overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-[#080C14] text-slate-100 font-sans selection:bg-orange-500 selection:text-white relative overflow-x-hidden overflow-y-auto">
       {/* ======================================================== */}
       {/* 1. LEFT SECTION: CALM CINEMATIC SHOWCASE & MOTTO         */}
       {/* ======================================================== */}
       <section
         aria-label="AIFA GEN LABS Brand Showcase"
-        className="relative lg:w-[56%] xl:w-[58%] min-h-[420px] lg:min-h-screen overflow-hidden flex flex-col justify-between p-8 sm:p-12 lg:p-16 z-10 border-b lg:border-b-0 lg:border-r border-white/5"
+        className="relative w-full lg:w-[56%] xl:w-[58%] min-h-auto lg:min-h-screen overflow-hidden flex flex-col justify-between p-6 sm:p-10 lg:p-16 z-10 border-b lg:border-b-0 lg:border-r border-white/5"
       >
         {/* Ambient Video Background (Calm, low opacity, clean blend) */}
         <video
@@ -155,8 +155,8 @@ export default function LoginPage({ onLoginSuccess }) {
         />
 
         {/* Top: AIFA Logo & Company Motto */}
-        <div className="relative z-10 flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-black/80 backdrop-blur-md border border-orange-500/30 p-2 flex items-center justify-center shadow-lg shadow-black/80 shrink-0">
+        <div className="relative z-10 flex items-center gap-3 sm:gap-3.5">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-black/80 backdrop-blur-md border border-orange-500/30 p-2 flex items-center justify-center shadow-lg shadow-black/80 shrink-0">
             <img
               src={aifaLogo}
               alt="AIFA GEN LABS"
@@ -165,27 +165,27 @@ export default function LoginPage({ onLoginSuccess }) {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[17px] font-black tracking-wider text-white uppercase font-sans">
+              <span className="text-[15px] sm:text-[17px] font-black tracking-wider text-white uppercase font-sans">
                 AIFA GEN LABS
               </span>
               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-400 border border-orange-500/30">
                 <Sparkles className="w-2.5 h-2.5" /> Core
               </span>
             </div>
-            <p className="text-[11px] font-bold text-[#EA580C] tracking-[0.2em] uppercase font-mono">
+            <p className="text-[10px] sm:text-[11px] font-bold text-[#EA580C] tracking-[0.2em] uppercase font-mono">
               Career Optimization
             </p>
           </div>
         </div>
 
         {/* Center: Minimal, Powerful Headline & Supporting Context */}
-        <div className="relative z-10 my-auto py-10 max-w-xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300 text-xs font-mono mb-6 backdrop-blur-md">
+        <div className="relative z-10 my-auto py-6 sm:py-10 max-w-xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300 text-xs font-mono mb-4 sm:mb-6 backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse" />
             <span>Intelligent Recruitment Operations</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-white tracking-tight leading-[1.15]">
+          <h1 className="text-2xl sm:text-3xl lg:text-[44px] font-extrabold text-white tracking-tight leading-[1.15]">
             Better intelligence.
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-500">
@@ -193,12 +193,12 @@ export default function LoginPage({ onLoginSuccess }) {
             </span>
           </h1>
 
-          <p className="mt-4 text-sm sm:text-base text-slate-300/80 leading-relaxed font-normal max-w-lg">
+          <p className="mt-3 sm:mt-4 text-xs sm:text-base text-slate-300/80 leading-relaxed font-normal max-w-lg">
             Your command center for intelligent recruitment operations, job discovery, and platform performance.
           </p>
 
           {/* 3 Minimal, Effective Value Highlights */}
-          <div className="mt-8 space-y-3.5 max-w-lg">
+          <div className="mt-6 sm:mt-8 space-y-3 sm:space-y-3.5 max-w-lg">
             <div className="flex items-center gap-3 text-xs sm:text-sm text-slate-200">
               <div className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/25 text-[#EA580C] flex items-center justify-center shrink-0">
                 <Search className="w-3.5 h-3.5" />
@@ -229,7 +229,7 @@ export default function LoginPage({ onLoginSuccess }) {
         </div>
 
         {/* Bottom: Clean Subtitle & Encrypted Badge */}
-        <div className="relative z-10 pt-4 flex items-center justify-between text-xs text-slate-400 font-mono border-t border-white/5">
+        <div className="relative z-10 pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-400 font-mono border-t border-white/5">
           <span>Global Career Optimization Console</span>
           <div className="flex items-center gap-1.5 text-slate-400">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
@@ -243,23 +243,23 @@ export default function LoginPage({ onLoginSuccess }) {
       {/* ======================================================== */}
       <section
         aria-label="Sign In"
-        className="w-full lg:w-[44%] xl:w-[42%] min-h-screen flex flex-col justify-between p-6 sm:p-10 lg:p-12 relative bg-[#0B101D] z-10 border-t lg:border-t-0"
+        className="w-full lg:w-[44%] xl:w-[42%] min-h-auto lg:min-h-screen flex flex-col justify-between p-4 sm:p-8 lg:p-12 relative bg-[#0B101D] z-10 border-t lg:border-t-0"
       >
         <div className="w-full max-w-[400px] mx-auto my-auto py-4">
           {/* Floating Pure White Card */}
           <div
             style={{ backgroundColor: "#ffffff" }}
-            className="rounded-[24px] sm:rounded-[28px] p-7 sm:p-9 shadow-2xl shadow-black/70 border border-slate-100 text-slate-900 transition-all"
+            className="rounded-[20px] sm:rounded-[28px] p-5 sm:p-9 shadow-2xl shadow-black/70 border border-slate-100 text-slate-900 transition-all"
           >
             {/* Header */}
-            <div className="mb-6">
+            <div className="mb-5 sm:mb-6">
               <span className="text-[11px] font-bold font-mono uppercase tracking-widest text-[#EA580C] block mb-1">
                 Career Optimization
               </span>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                 Welcome back
               </h2>
-              <p className="text-sm text-slate-500 mt-1 font-normal">
+              <p className="text-xs sm:text-sm text-slate-500 mt-1 font-normal">
                 Sign in to your AIFA workspace.
               </p>
             </div>

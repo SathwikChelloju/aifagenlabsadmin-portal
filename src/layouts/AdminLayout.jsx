@@ -14,6 +14,7 @@ import {
   Briefcase,
   UserCheck,
   ArrowRight,
+  Menu,
 } from "lucide-react";
 import { NAVIGATION_GROUPS } from "../constants/navigation";
 import NotificationBell from "../features/notifications/components/NotificationBell";
@@ -37,6 +38,7 @@ export default function AdminLayout({
   const { logout, user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSyncingFeeds, setIsSyncingFeeds] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { addToast } = useToast();
   const { settings } = useSettings();
   const currentLogo = settings?.general?.logoUrl || aifaLogo;
@@ -231,7 +233,7 @@ export default function AdminLayout({
       <aside
         onMouseEnter={() => setIsExpanded(true)}
         onMouseLeave={() => setIsExpanded(false)}
-        className={`fixed top-0 left-0 h-screen z-50 border-r transition-all duration-300 ease-in-out select-none flex flex-col justify-between ${
+        className={`fixed top-0 left-0 h-screen z-40 border-r transition-all duration-300 ease-in-out select-none hidden md:flex flex-col justify-between ${
           darkMode
             ? "bg-[#0D1117] border-[#30363D]"
             : "bg-white border-slate-200"
@@ -795,32 +797,324 @@ export default function AdminLayout({
         </div>
       </aside>
 
-      {/* VIEWPORT: Padded 64px to clear persistent rail */}
+      {/* 2. MOBILE DRAWER OVERLAY & SIDEBAR */}
+      {isMobileMenuOpen && (
+        <div
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 md:hidden animate-in fade-in duration-200"
+          aria-hidden="true"
+        />
+      )}
 
-      <div className="flex-1 w-full pl-16 flex flex-col min-w-0">
+      <aside
+        className={`fixed top-0 left-0 bottom-0 w-72 max-w-[85vw] z-50 border-r select-none flex flex-col justify-between md:hidden transition-transform duration-300 ease-in-out ${
+          isMobileMenuOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
+        } ${
+          darkMode
+            ? "bg-[#0D1117] border-[#30363D]"
+            : "bg-white border-slate-200"
+        }`}
+        aria-label="Mobile Navigation"
+      >
+        <div className="p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-140px)] custom-scrollbar">
+          {/* Header with Logo & Close Button */}
+          <div className="flex items-center justify-between h-10">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 min-w-9 rounded-xl overflow-hidden bg-black flex items-center justify-center shadow-sm border border-slate-700/50">
+                <img
+                  src={currentLogo}
+                  alt={platformName}
+                  className="h-full w-full object-contain p-1"
+                />
+              </div>
+              <div className="truncate leading-tight">
+                <div
+                  className={`text-sm font-extrabold tracking-tight truncate ${darkMode ? "text-white" : "text-slate-900"}`}
+                >
+                  {platformName}
+                </div>
+                <div className="text-[10px] text-slate-400 font-mono">
+                  Console 2026
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-colors cursor-pointer"
+              aria-label="Close menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Navigation Items in Mobile Drawer */}
+          <div className="space-y-4 pt-2">
+            {displayedNavigationGroups.map((grp) => (
+              <div key={grp.group} className="space-y-1">
+                <div className="px-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                  {grp.group}
+                </div>
+                {grp.items.map((item) => {
+                  const Icon = item.icon;
+
+                  if (item.children) {
+                    const isAnyChildActive = item.children.some(
+                      (c) => activePage === c.id
+                    );
+                    const isParentOpen = isCandidatesOpen;
+
+                    return (
+                      <div key={item.id} className="space-y-1">
+                        <button
+                          type="button"
+                          onClick={() => toggleSubmenu(item.id)}
+                          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                            isAnyChildActive
+                              ? darkMode
+                                ? "bg-amber-500/10 text-amber-300 font-bold border border-amber-500/25"
+                                : "bg-amber-50/60 text-amber-800 font-bold border border-amber-200/60 shadow-2xs"
+                              : darkMode
+                              ? "text-slate-400 hover:bg-[#161B22] hover:text-white"
+                              : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <Icon
+                              className={`w-4 h-4 shrink-0 ${
+                                isAnyChildActive ? "text-[#D97706]" : "text-slate-400"
+                              }`}
+                            />
+                            <span>{item.label}</span>
+                          </div>
+                          <span className="text-slate-400">
+                            {isParentOpen ? (
+                              <ChevronDown className="w-3.5 h-3.5" />
+                            ) : (
+                              <ChevronRight className="w-3.5 h-3.5" />
+                            )}
+                          </span>
+                        </button>
+
+                        {isParentOpen && (
+                          <div
+                            className={`space-y-1 pl-3 ml-4.5 my-1 border-l ${
+                              darkMode ? "border-[#30363D]" : "border-slate-200"
+                            }`}
+                          >
+                            {item.children.map((child) => {
+                              const isChildActive = activePage === child.id;
+                              return (
+                                <button
+                                  key={child.id}
+                                  type="button"
+                                  onClick={() => {
+                                    setActivePage(child.id);
+                                    setIsMobileMenuOpen(false);
+                                  }}
+                                  className={`w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl text-xs transition-all cursor-pointer ${
+                                    isChildActive
+                                      ? darkMode
+                                        ? "bg-amber-500/20 text-amber-400 font-bold border border-amber-500/40 shadow-xs"
+                                        : "bg-amber-50 text-amber-800 font-bold border border-amber-300 shadow-xs"
+                                      : darkMode
+                                      ? "text-slate-400 hover:bg-[#161B22] hover:text-white"
+                                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2 truncate">
+                                    <span
+                                      className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                                        isChildActive ? "bg-[#D97706]" : "bg-slate-400"
+                                      }`}
+                                    />
+                                    <span className="truncate">{child.label}</span>
+                                  </div>
+                                  {child.badge && (
+                                    <span
+                                      className={`text-[10px] font-mono px-1.5 py-0.5 rounded-full font-bold ${
+                                        darkMode
+                                          ? "bg-[#161B22] text-slate-400 border border-[#30363D]"
+                                          : "bg-slate-100 text-slate-600 border border-slate-200"
+                                      }`}
+                                    >
+                                      {child.badge}
+                                    </span>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+
+                  const isActive =
+                    activePage === item.id ||
+                    (item.id === "jobs" &&
+                      (activePage === "job-sources" || activePage === "internal-jobs"));
+
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        setActivePage(item.id);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                        isActive
+                          ? darkMode
+                            ? "bg-amber-500/15 text-amber-400 font-bold border border-amber-500/30"
+                            : "bg-amber-50/70 text-amber-700 font-bold border border-amber-200/80 shadow-xs"
+                          : darkMode
+                          ? "text-slate-400 hover:bg-[#161B22] hover:text-white"
+                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Icon
+                          className={`w-4 h-4 shrink-0 ${
+                            isActive ? "text-[#D97706]" : "text-slate-400"
+                          }`}
+                        />
+                        <span>{item.label}</span>
+                      </div>
+                      {item.badge && (
+                        <span
+                          className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
+                            darkMode
+                              ? "bg-[#161B22] text-slate-400 border border-[#30363D]"
+                              : "bg-slate-100 text-slate-600 border border-slate-200"
+                          }`}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile Drawer Bottom: Theme Switcher & User Profile with Sign Out */}
+        <div
+          className={`p-4 border-t space-y-3 shrink-0 ${
+            darkMode ? "border-[#30363D] bg-[#090D12]" : "border-slate-200 bg-slate-50"
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-400">Theme</span>
+            <button
+              type="button"
+              onClick={() => setDarkMode(!darkMode)}
+              className={`px-3 py-1.5 rounded-xl border flex items-center gap-2 text-xs font-semibold cursor-pointer ${
+                darkMode
+                  ? "bg-[#161B22] border-[#30363D] text-slate-200"
+                  : "bg-white border-slate-200 text-slate-700"
+              }`}
+            >
+              {darkMode ? (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-blue-400" />
+                  <span>Dark</span>
+                </>
+              ) : (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Light</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between pt-2 border-t border-slate-700/20">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="h-8 w-8 min-w-8 rounded-full overflow-hidden bg-black flex items-center justify-center shrink-0 border border-slate-700/50">
+                <img
+                  src={aifaLogo}
+                  alt="AIFA GEN LABS"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="min-w-0 leading-tight">
+                <div
+                  className={`text-xs font-bold truncate ${
+                    darkMode ? "text-white" : "text-slate-900"
+                  }`}
+                >
+                  {user?.name || "Admin AIFA"}
+                </div>
+                <div className="text-[10px] text-slate-400 truncate font-mono">
+                  {user?.email || "admin@aifagen@gmail.com"}
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={async (e) => {
+                e.preventDefault();
+                setIsMobileMenuOpen(false);
+                if (typeof onSignOut === "function") {
+                  onSignOut();
+                } else {
+                  await signOut();
+                  window.location.href = "/login";
+                }
+              }}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors cursor-pointer"
+              title="Sign Out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* 3. DYNAMIC MAIN CONTENT VIEWPORT (Responsive pl-0 on mobile, pl-16 on desktop) */}
+
+      <div className="flex-1 w-full pl-0 md:pl-16 flex flex-col min-w-0">
         <header
-          className={`sticky top-0 z-30 border-b px-6 py-4 shadow-[0_1px_0_rgba(15,23,42,0.06)] flex items-center justify-between transition-colors backdrop-blur-md ${
+          className={`sticky top-0 z-30 border-b px-3 sm:px-6 py-2.5 sm:py-4 shadow-[0_1px_0_rgba(15,23,42,0.06)] flex items-center justify-between transition-colors backdrop-blur-md ${
             darkMode
               ? "bg-[#0D1117]/95 border-[#30363D]"
               : "bg-white/95 border-slate-200"
           }`}
         >
-          <div className="flex items-center gap-3 min-w-0">
-            <h2 className="text-[15px] sm:text-xl font-extrabold uppercase tracking-[0.14em] text-[#D97706] whitespace-nowrap">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(true)}
+              className={`p-2 rounded-xl md:hidden border transition-colors cursor-pointer shrink-0 ${
+                darkMode
+                  ? "bg-[#161B22] border-[#30363D] text-slate-300 hover:text-white"
+                  : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-xs"
+              }`}
+              aria-label="Open mobile navigation menu"
+            >
+              <Menu className="w-4 h-4 text-amber-500" />
+            </button>
+
+            <h2 className="text-sm sm:text-base md:text-xl font-extrabold uppercase tracking-[0.14em] text-[#D97706] whitespace-nowrap truncate">
               {(activePage || "dashboard").replace(/-/g, " ")}
             </h2>
 
-            <span className={darkMode ? "text-slate-600" : "text-slate-300"}>
+            <span className={`hidden sm:inline ${darkMode ? "text-slate-600" : "text-slate-300"}`}>
               |
             </span>
 
-            <span className="text-[11px] sm:text-xs text-slate-500 font-medium hidden md:inline truncate">
+            <span className="text-[11px] sm:text-xs text-slate-500 font-medium hidden lg:inline truncate">
               {platformName} • {companyTagline}
             </span>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            <GlobalSearchBar onNavigate={setActivePage} darkMode={darkMode} />
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+            <GlobalSearchBar onNavigate={(p) => { setActivePage(p); setIsMobileMenuOpen(false); }} darkMode={darkMode} />
 
             <button
               type="button"
@@ -842,7 +1136,7 @@ export default function AdminLayout({
                 }
               }}
               disabled={isSyncingFeeds}
-              className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
                 isSyncingFeeds
                   ? "opacity-75 cursor-not-allowed"
                   : "active:scale-95"
@@ -859,18 +1153,18 @@ export default function AdminLayout({
                 }`}
               />
 
-              <span>{isSyncingFeeds ? "Syncing Feeds..." : "Sync Feeds"}</span>
+              <span className="hidden sm:inline">{isSyncingFeeds ? "Syncing Feeds..." : "Sync Feeds"}</span>
             </button>
 
             {/* Centralized Notifications Bell */}
             <NotificationBell
-              onNavigate={setActivePage}
+              onNavigate={(p) => { setActivePage(p); setIsMobileMenuOpen(false); }}
               darkMode={darkMode}
             />
           </div>
         </header>
 
-        <main className="flex-1 w-full px-6 py-6">{children}</main>
+        <main className="flex-1 w-full px-3 sm:px-6 py-4 sm:py-6 overflow-x-hidden">{children}</main>
       </div>
 
       {/* Floating AI Admin Assistant across all portal pages */}

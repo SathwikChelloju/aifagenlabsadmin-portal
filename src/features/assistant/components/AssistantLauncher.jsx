@@ -12,7 +12,7 @@ export default function AssistantLauncher({
   darkMode = false,
 }) {
   return (
-    <div className="fixed bottom-6 right-6 z-40">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40">
       <Tooltip
         content={isOpen ? "Minimize AI Assistant" : "AI Admin Assistant — Ask anything about portal telemetry"}
         position="left"

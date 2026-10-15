@@ -143,8 +143,8 @@ export default function AssistantPanel({
       aria-labelledby="assistant-title"
       className={`assistant-scope fixed z-50 transition-all duration-200 ease-out flex flex-col rounded-2xl shadow-2xl border overflow-hidden ${
         isExpanded
-          ? "bottom-4 right-4 sm:right-6 w-[760px] max-w-[calc(100vw-2rem)] h-[760px] max-h-[calc(100vh-2rem)]"
-          : "bottom-22 right-4 sm:right-6 w-[460px] max-w-[calc(100vw-2rem)] h-[640px] max-h-[calc(100vh-6.5rem)]"
+          ? "inset-2 sm:inset-auto sm:bottom-4 sm:right-6 w-auto sm:w-[760px] max-w-[calc(100vw-1rem)] sm:max-w-[calc(100vw-2rem)] h-[calc(100dvh-1rem)] sm:h-[760px] sm:max-h-[calc(100vh-2rem)]"
+          : "inset-x-3 bottom-18 sm:inset-x-auto sm:bottom-22 sm:right-6 w-auto sm:w-[460px] max-w-[calc(100vw-1.5rem)] sm:max-w-[460px] h-[540px] max-h-[calc(100dvh-5.5rem)]"
       } ${
         darkMode
           ? "bg-[#0D1117] border-[#30363D] text-slate-100 shadow-black/70"

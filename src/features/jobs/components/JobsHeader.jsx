@@ -28,7 +28,7 @@ export default function JobsHeader({
         </p>
       </div>
 
-      <div className="flex items-center gap-2.5">
+      <div className="flex flex-wrap items-center gap-2.5">
         {onExportCsv && (
           <button
             type="button"
