@@ -268,7 +268,10 @@ export default function VoiceInterface({
               <div className="flex items-center gap-2 mt-2">
                 <button
                   type="button"
-                  onClick={onStartListening}
+                  onClick={() => {
+                    onClearError?.();
+                    onStartListening();
+                  }}
                   className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-900 dark:text-rose-200 font-semibold hover:bg-rose-200 cursor-pointer"
                 >
                   <RotateCcw className="w-3 h-3" /> Try Again

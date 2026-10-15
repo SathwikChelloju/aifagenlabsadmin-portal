@@ -6,6 +6,7 @@ import {
   createVoiceAgentUtterance,
   speakText,
   stopSpeaking as cancelSpeech,
+  getNaturalEnglishVoice,
 } from "../services/voiceService";
 
 /**
