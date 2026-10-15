@@ -73,7 +73,7 @@ export class AiAssistantClient {
         tool: interpreted.tool || "conversation",
         aiMetadata: interpreted.aiMetadata || {
           provider: interpreted.provider || "groq",
-          model: interpreted.model || "Groq (llama-3.3-70b-versatile)",
+          model: interpreted.model || "Groq (openai/gpt-oss-20b)",
           isOfflineFallback: interpreted.isOfflineFallback || false,
           reasoning: interpreted.reasoning,
           notice: interpreted.notice,

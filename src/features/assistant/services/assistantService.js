@@ -98,7 +98,7 @@ class AssistantService {
 
     try {
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("AI response timed out")), 12000)
+        setTimeout(() => reject(new Error("AI response timed out")), 25000)
       );
 
       // 3. Send question, previous conversation history, and active page

@@ -75,7 +75,7 @@
 
 ### 3. Multimodal AI Operations Assistant (Voice + Chat)
 - **Dual-Mode Experience**: Instant switching between `[ Chat ]` and `[ Voice ]` modes while preserving complete conversation history.
-- **Grounded Conversational Intelligence**: Powered by Groq Cloud (`llama-3.3-70b-versatile` with automatic fallback to `llama-3.1-8b-instant`) grounded in real-time portal telemetry, paired with an offline deterministic semantic NLU parser.
+- **Grounded Conversational Intelligence**: Powered by Groq Cloud (`openai/gpt-oss-20b` configured centrally via `GROQ_MODEL`) grounded in real-time portal telemetry, paired with an offline deterministic semantic NLU parser.
 - **Real-Time Voice Agent**:
   - Uses browser-native Web Speech API (`SpeechRecognition` / `webkitSpeechRecognition`, `speechSynthesis`).
   - **Natural Spoken Delivery**: Directly speaks candidate, recruiter, or job names (e.g., *"Found 3 users currently enrolled in the Basic plan: Tariq Mansoor, Liam O'Connor, and Daisuke Tanaka"*).
@@ -165,7 +165,7 @@
 | **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) | Atomic utility classes, CSS variables, and dark/light themes |
 | **Icons** | [Lucide React](https://lucide.dev/) | Consistent iconography across navigation, actions, and KPIs |
 | **PDF & Export** | [jsPDF](https://github.com/parallax/jsPDF) + [html2canvas](https://html2canvas.hertzen.com/) | Client-side invoice rendering and telemetry report export |
-| **AI / LLM** | [Groq Cloud](https://groq.com/) | High-speed inference using `llama-3.3-70b-versatile` / `llama-3.1-8b-instant` |
+| **AI / LLM** | [Groq Cloud](https://groq.com/) | High-speed inference using `openai/gpt-oss-20b` |
 | **Speech APIs** | Web Speech API | Native `SpeechRecognition` and `SpeechSynthesis` |
 | **Linter** | [Oxlint](https://oxc.rs/) | Rust-based high-performance linter (0 warnings, 0 errors) |
 | **Test Runner** | Node.js ESM | Native test runner (`node:assert`) across 46 verification cases |
@@ -195,10 +195,11 @@ Copy the example environment configuration:
 ```bash
 cp .env.example .env
 ```
-Add your Groq API key (optional for live AI queries):
+Add your Groq API credentials (optional for live AI queries):
 ```env
-VITE_GROQ_API_KEY=your_groq_api_key_here
-PORT=5174
+GROQ_API_KEY=your_groq_api_key_here
+GROQ_MODEL=openai/gpt-oss-20b
+PORT=5001
 ```
 *(Note: If no API key is supplied, the portal's built-in deterministic semantic NLU engine operates with 100% offline accuracy.)*
 
@@ -265,9 +266,9 @@ The repository includes a pre-configured [vercel.json](file:///Users/sathwikchel
 4. Vercel automatically detects the Vite framework:
    - **Build Command**: `npm run build`
    - **Output Directory**: `dist`
-5. *(Optional)* Add the environment variable in Vercel project settings:
+5. *(Optional)* Add the environment variables in Vercel project settings:
    - `GROQ_API_KEY`: `your_groq_api_key` (used by Vercel serverless function `/api/assistant/interpret`)
-   - `VITE_GROQ_API_KEY`: `your_groq_api_key` (embedded into client build for direct browser fallback)
+   - `GROQ_MODEL`: `openai/gpt-oss-20b` (optional, defaults to `openai/gpt-oss-20b`)
 6. Click **Deploy**.
 
 All routes (`/login`, `/dashboard`, `/users`, `/jobs`, `/payments`, `/settings`) resolve cleanly with zero 404 reload errors, and the AI Assistant seamlessly connects to Groq Cloud.

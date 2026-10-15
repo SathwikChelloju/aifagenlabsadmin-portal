@@ -4,7 +4,7 @@
  *
  * Implements:
  * 1. Gemini API (gemini-1.5-flash) when GEMINI_API_KEY is configured.
- * 2. Groq API (llama-3.3-70b-versatile) when GROQ_API_KEY is configured.
+ * 2. Groq API (openai/gpt-oss-20b) when GROQ_API_KEY is configured.
  * 3. Deterministic Semantic NLU Parser when no AI API key is configured.
  *
  * Enforces:
@@ -1270,18 +1270,39 @@ export async function executeDeterministicFallback({ query, activePage, history 
 }
 
 /**
+ * Central Model Configuration for Groq Provider
+ * Configured via process.env.GROQ_MODEL with default to "openai/gpt-oss-20b".
+ */
+export const DEFAULT_GROQ_MODEL = "openai/gpt-oss-20b";
+
+export function getGroqModel() {
+  const envModel = (typeof process !== "undefined" && process.env?.GROQ_MODEL)?.trim();
+  if (!envModel) return DEFAULT_GROQ_MODEL;
+  // Safely map deprecated/placeholder models to the active production model
+  if (
+    envModel === "openai/gpt-oss-120b" ||
+    envModel === "llama-3.1-8b-instant" ||
+    envModel === "llama-3.3-70b-versatile"
+  ) {
+    return DEFAULT_GROQ_MODEL;
+  }
+  return envModel;
+}
+
+/**
  * Simplified Groq Conversational AI Handler
  * Follows direct context-grounded architecture:
  * 1. Collects application context from JavaScript source files and mock stores.
  * 2. Collects conversation history from request (originating from sessionStorage).
- * 3. Sends single clean completion request to Groq model.
+ * 3. Sends single clean completion request to Groq model using central model configuration.
  * 4. Grounded natural language response returned with interactive structured data.
  */
 async function executeGroqAgentLoop({ query, activePage = "dashboard", history = [], apiKey }) {
   const endpoint = "https://api.groq.com/openai/v1/chat/completions";
-  const configuredModel = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
-  // Normalize invalid/placeholder model names to Groq's official production model
-  let model = configuredModel === "openai/gpt-oss-120b" ? "llama-3.3-70b-versatile" : configuredModel;
+  const model = getGroqModel();
+
+  // Log the model ID being used (NEVER log the API key)
+  console.log(`[Groq Agent] Requesting chat completion with model: ${model}`);
 
   // Step 1: Collect application context from JavaScript source files and mock stores
   const { contextText, structuredResult, detectedTool } =
@@ -1343,8 +1364,8 @@ ${contextText}`,
   // Step 3: Append current user question
   formattedMessages.push({ role: "user", content: query });
 
-  // Step 4: Call Groq with full context
-  let res = await callGroqWithRetry(fetch, endpoint, {
+  // Step 4: Call Groq with full context using central model configuration
+  const res = await callGroqWithRetry(fetch, endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -1354,27 +1375,9 @@ ${contextText}`,
       model,
       messages: formattedMessages,
       temperature: 0.2,
-      max_tokens: 1024,
+      max_tokens: 1536,
     }),
-  }, 2);
-
-  // If initial model had an error (e.g. 404 model not found or decommissioned), try fallback model llama-3.1-8b-instant
-  if (!res.ok && res.status === 404 && model !== "llama-3.1-8b-instant") {
-    model = "llama-3.1-8b-instant";
-    res = await callGroqWithRetry(fetch, endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        messages: formattedMessages,
-        temperature: 0.2,
-        max_tokens: 1024,
-      }),
-    }, 1);
-  }
+  }, 1);
 
   if (!res.ok) {
     let errMessage = `HTTP ${res.status}`;
@@ -1387,7 +1390,8 @@ ${contextText}`,
   }
 
   const data = await res.json();
-  const content = data.choices?.[0]?.message?.content;
+  const choice = data.choices?.[0];
+  const content = choice?.message?.content || choice?.message?.reasoning;
 
   if (!content) {
     return executeDeterministicFallback({ query, activePage, history });

@@ -124,9 +124,4 @@ function assistantApiPlugin() {
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), assistantApiPlugin()],
-  define: {
-    "import.meta.env.VITE_GROQ_API_KEY": JSON.stringify(
-      process.env.VITE_GROQ_API_KEY || process.env.GROQ_API_KEY || ""
-    ),
-  },
 });

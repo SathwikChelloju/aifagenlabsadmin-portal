@@ -637,7 +637,7 @@ console.log("  17.9: Transparent fallback messaging on open-ended queries during
 const offlineFallback = await executeDeterministicFallback({
   query: "What is our competitive advantage in European cloud recruitment?",
   activePage: "dashboard",
-  errorNotice: "Rate limit reached for model openai/gpt-oss-120b (TPM: Limit 8000)",
+  errorNotice: "Rate limit reached for model openai/gpt-oss-20b (TPM: Limit 8000)",
 });
 assert.strictEqual(offlineFallback.tool, "offline_notice");
 assert(offlineFallback.text.includes("AI Assistant Notice"), "Must display clear service notice");
