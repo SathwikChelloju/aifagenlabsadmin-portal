@@ -323,8 +323,21 @@ export function cleanMarkdownForSpeech(markdownText = "") {
     .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, "")
     .replace(/\b(usr|cnd|job|rec)_[a-zA-Z0-9_-]+\b/g, "");
 
-  // 12. Normalize excessive whitespace, line breaks, and pipes
+  // 12. Normalize abbreviations and technical codes for clear pronunciation
   text = text
+    .replace(/\bvs\.?\b/gi, "versus")
+    .replace(/\bMRR\b/g, "Monthly Recurring Revenue")
+    .replace(/\bATS\b/g, "A T S")
+    .replace(/\bKPIs?\b/gi, "K P I")
+    .replace(/\bCSV\b/gi, "C S V")
+    .replace(/\bAPI\b/gi, "A P I")
+    .replace(/\b(\d+)d\b/g, "$1 days");
+
+  // 13. Convert colons into natural sentence pauses and normalize punctuation
+  text = text
+    .replace(/:\s+/g, ". ")
+    .replace(/;/g, ", ")
+    .replace(/\s*—\s*/g, ", ")
     .replace(/\|/g, ", ")
     .replace(/\s+/g, " ")
     .replace(/,\s*,/g, ",")
@@ -352,6 +365,8 @@ export function isSpeechSynthesisSupported() {
 
 /**
  * Get natural English voice from available browser voices.
+ * Prioritizes high-fidelity neural/enhanced voices, filtering out
+ * harsh, rapid, or robotic legacy synthesizers.
  */
 export function getNaturalEnglishVoice() {
   if (!isSpeechSynthesisSupported()) return null;
@@ -360,32 +375,67 @@ export function getNaturalEnglishVoice() {
     const voices = window.speechSynthesis.getVoices() || [];
     if (!voices || voices.length === 0) return null;
 
-    // Prioritize high-quality natural/enhanced English voices
+    // Filter to English voices
+    const englishVoices = voices.filter(
+      (v) => v.lang && v.lang.toLowerCase().startsWith("en")
+    );
+    const pool = englishVoices.length > 0 ? englishVoices : voices;
+
+    // 1. First priority: Modern Neural / Enhanced / Natural / Premium voices
+    // (e.g. Edge "Natural", Chrome "Google US English", Apple Siri "Enhanced" / "Premium")
+    const neuralVoice = pool.find((v) => {
+      const name = (v.name || "").toLowerCase();
+      return (
+        name.includes("natural") ||
+        name.includes("enhanced") ||
+        name.includes("premium") ||
+        name.includes("neural") ||
+        name.includes("online (natural)")
+      );
+    });
+    if (neuralVoice) return neuralVoice;
+
+    // 2. Second priority: Preferred high-clarity contemporary voices
     const preferredNames = [
-      "Samantha",
-      "Daniel",
-      "Karen",
-      "Alex",
+      "Ava",
+      "Zoe",
+      "Allison",
+      "Serena",
+      "Evan",
+      "Tom",
+      "Nicky",
       "Google US English",
       "Google UK English Female",
       "Google UK English Male",
       "Microsoft Jenny",
+      "Microsoft Aria",
       "Microsoft Guy",
-      "Natural",
+      "Samantha",
+      "Daniel",
+      "Karen",
     ];
 
     for (const name of preferredNames) {
-      const match = voices.find(
-        (v) => v.name.includes(name) && v.lang.startsWith("en")
+      const match = pool.find((v) =>
+        (v.name || "").toLowerCase().includes(name.toLowerCase())
       );
       if (match) return match;
     }
 
-    // Fallback to any English voice
-    const anyEnglish = voices.find((v) => v.lang.startsWith("en"));
-    if (anyEnglish) return anyEnglish;
+    // 3. Fallback: Any English voice that is NOT an old novelty / robotic synthesizer
+    const roboticNames = [
+      "bad news", "bahh", "bells", "boing", "bubbles", "cellos",
+      "deranged", "fred", "good news", "hysterical", "junior",
+      "kathy", "pipe organ", "trinoids", "whisper", "zarvox", "albert"
+    ];
 
-    return voices[0] || null;
+    const cleanEnglish = pool.find((v) => {
+      const n = (v.name || "").toLowerCase();
+      return !roboticNames.some((r) => n.includes(r));
+    });
+    if (cleanEnglish) return cleanEnglish;
+
+    return pool[0] || null;
   } catch (e) {
     console.warn("Error retrieving browser speech voices:", e);
     return null;
@@ -395,9 +445,10 @@ export function getNaturalEnglishVoice() {
 /**
  * Speak text or message aloud using browser SpeechSynthesis.
  * Automatically converts message into a concise real-time voice agent utterance.
+ * Defaults to a calm, articulate pace (rate: 0.92) for high intelligibility.
  * Returns the SpeechSynthesisUtterance instance, or null if unsupported.
  */
-export function speakText(textOrMessage, { onStart, onEnd, onError, rate = 1.05 } = {}) {
+export function speakText(textOrMessage, { onStart, onEnd, onError, rate = 0.92, pitch = 1.0 } = {}) {
   if (!isSpeechSynthesisSupported()) {
     if (onError) onError(new Error("Speech synthesis is not supported in this browser."));
     return null;
@@ -418,7 +469,7 @@ export function speakText(textOrMessage, { onStart, onEnd, onError, rate = 1.05 
 
     const utterance = new window.SpeechSynthesisUtterance(cleanText);
     utterance.rate = rate;
-    utterance.pitch = 1.0;
+    utterance.pitch = pitch;
 
     const voice = getNaturalEnglishVoice();
     if (voice) {

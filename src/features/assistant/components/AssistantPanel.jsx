@@ -58,6 +58,8 @@ export default function AssistantPanel({
     stopSpeaking,
     clearVoiceError,
     spokenResponse,
+    voiceSpeed,
+    setVoiceSpeed,
   } = useVoiceAssistant({
     messages,
     isProcessing,
@@ -282,6 +284,8 @@ export default function AssistantPanel({
           transcript={transcript}
           spokenResponse={spokenResponse}
           voiceError={voiceError}
+          voiceSpeed={voiceSpeed}
+          onSetVoiceSpeed={setVoiceSpeed}
           isListening={isListening}
           isSpeaking={isSpeaking}
           isProcessingQuery={isProcessingQuery}

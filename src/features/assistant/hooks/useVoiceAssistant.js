@@ -27,6 +27,14 @@ export function useVoiceAssistant({
   const [transcript, setTranscript] = useState("");
   const [spokenResponse, setSpokenResponse] = useState("");
   const [voiceError, setVoiceError] = useState(null);
+  const [voiceSpeed, setVoiceSpeed] = useState(() => {
+    try {
+      const saved = localStorage.getItem("aifa_voice_speed");
+      return saved ? parseFloat(saved) : 0.92;
+    } catch {
+      return 0.92;
+    }
+  });
 
   const recognitionRef = useRef(null);
   const lastSpokenIdRef = useRef(null);
@@ -34,6 +42,30 @@ export function useVoiceAssistant({
 
   const isRecognitionSupported = isSpeechRecognitionSupported();
   const isSynthesisSupported = isSpeechSynthesisSupported();
+
+  // Pre-load natural voices on initialization
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      getNaturalEnglishVoice();
+      const onVoices = () => {
+        getNaturalEnglishVoice();
+      };
+      window.speechSynthesis.addEventListener?.("voiceschanged", onVoices);
+      return () => {
+        window.speechSynthesis.removeEventListener?.("voiceschanged", onVoices);
+      };
+    }
+  }, []);
+
+  const updateVoiceSpeed = useCallback((newSpeed) => {
+    const s = Number(newSpeed);
+    setVoiceSpeed(s);
+    try {
+      localStorage.setItem("aifa_voice_speed", String(s));
+    } catch {
+      // Ignore storage errors
+    }
+  }, []);
 
   // Stop active speech playback
   const stopSpeaking = useCallback(() => {
@@ -175,12 +207,14 @@ export function useVoiceAssistant({
       }
 
       speakText(spokenText, {
+        rate: voiceSpeed,
+        pitch: 1.0,
         onStart: () => setVoiceStatus("speaking"),
         onEnd: () => setVoiceStatus("idle"),
         onError: () => setVoiceStatus("idle"),
       });
     }
-  }, [messages, isProcessing, mode, isSynthesisSupported]);
+  }, [messages, isProcessing, mode, isSynthesisSupported, voiceSpeed]);
 
   // Cleanup on assistant panel close or unmount
   useEffect(() => {
@@ -223,6 +257,8 @@ export function useVoiceAssistant({
     transcript,
     spokenResponse,
     voiceError,
+    voiceSpeed,
+    setVoiceSpeed: updateVoiceSpeed,
     isRecognitionSupported,
     isSynthesisSupported,
     isListening: effectiveVoiceStatus === "listening",

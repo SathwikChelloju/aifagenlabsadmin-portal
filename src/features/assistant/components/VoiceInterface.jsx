@@ -22,6 +22,8 @@ export default function VoiceInterface({
   transcript = "",
   spokenResponse = "",
   voiceError = null,
+  voiceSpeed = 0.92,
+  onSetVoiceSpeed,
   isListening = false,
   isSpeaking = false,
   isProcessingQuery = false,
@@ -30,6 +32,7 @@ export default function VoiceInterface({
   onStopListening,
   onStopSpeaking,
   onSwitchToChat,
+  onClearError,
   messages = [],
   darkMode = false,
 }) {
@@ -123,7 +126,12 @@ export default function VoiceInterface({
 
           {voiceStatus === "speaking" && (
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/35 text-amber-700 dark:text-amber-300 text-xs font-semibold shadow-xs">
-              <Volume2 className="w-3.5 h-3.5 text-amber-500 animate-bounce" />
+              <div className="flex items-center gap-0.5 h-3 px-0.5">
+                <span className="w-0.5 h-2 bg-[#D97706] rounded-full animate-pulse" />
+                <span className="w-0.5 h-3.5 bg-[#D97706] rounded-full animate-bounce" />
+                <span className="w-0.5 h-2 bg-[#D97706] rounded-full animate-pulse" />
+                <span className="w-0.5 h-3 bg-[#D97706] rounded-full animate-bounce" />
+              </div>
               <span>Speaking response aloud...</span>
             </div>
           )}
@@ -217,6 +225,37 @@ export default function VoiceInterface({
           )}
         </div>
 
+        {/* SaaS Voice Cadence Selector */}
+        <div className="mt-4 flex items-center justify-center gap-2 select-none">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 font-mono">
+            Cadence:
+          </span>
+          <div className="inline-flex items-center rounded-xl p-0.5 bg-slate-100 dark:bg-[#161B22] border border-slate-200 dark:border-[#30363D]">
+            {[
+              { speed: 0.88, label: "0.88x Calm" },
+              { speed: 0.92, label: "0.92x Clear" },
+              { speed: 1.0, label: "1.0x Normal" },
+            ].map((opt) => {
+              const isSelected = Math.abs(voiceSpeed - opt.speed) < 0.02;
+              return (
+                <button
+                  key={opt.speed}
+                  type="button"
+                  onClick={() => onSetVoiceSpeed?.(opt.speed)}
+                  className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all cursor-pointer ${
+                    isSelected
+                      ? "bg-white dark:bg-[#21262D] text-[#D97706] dark:text-amber-400 shadow-2xs font-bold"
+                      : "text-slate-500 hover:text-slate-900 dark:hover:text-slate-200"
+                  }`}
+                  title={`Set voice reading speed to ${opt.label}`}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Error Feedback Banner */}
         {voiceError && (
           <div
@@ -273,7 +312,7 @@ export default function VoiceInterface({
           darkMode ? "border-[#30363D]" : "border-slate-200"
         }`}
       >
-        <span>Web Speech API</span>
+        <span>Natural Voice Engine • {voiceSpeed.toFixed(2)}x Cadence</span>
         <button
           type="button"
           onClick={onSwitchToChat}
