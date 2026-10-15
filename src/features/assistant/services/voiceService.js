@@ -365,24 +365,58 @@ export function isSpeechSynthesisSupported() {
 
 /**
  * Get natural English voice from available browser voices.
- * Prioritizes high-fidelity neural/enhanced voices, filtering out
- * harsh, rapid, or robotic legacy synthesizers.
+ * - Reads available voices from window.speechSynthesis.getVoices().
+ * - Prefers a natural-sounding English voice when available.
+ * - Prefers an English voice matching the user's configured language (e.g. navigator.language).
+ * - Returns a safe fallback if no preferred voice is available.
+ * - Never assumes that a particular voice exists or is non-empty.
+ * - Gracefully handles browsers/environments where speechSynthesis is unavailable.
  */
-export function getNaturalEnglishVoice() {
+export function getNaturalEnglishVoice(preferredLang = null) {
   if (!isSpeechSynthesisSupported()) return null;
 
   try {
-    const voices = window.speechSynthesis.getVoices() || [];
-    if (!voices || voices.length === 0) return null;
+    if (
+      typeof window === "undefined" ||
+      !window.speechSynthesis ||
+      typeof window.speechSynthesis.getVoices !== "function"
+    ) {
+      return null;
+    }
+
+    const rawVoices = window.speechSynthesis.getVoices();
+    if (!rawVoices || !Array.isArray(rawVoices) || rawVoices.length === 0) {
+      return null;
+    }
+
+    // Determine target user language preference (e.g. "en-US", "en-GB")
+    const userLang = (
+      preferredLang ||
+      (typeof navigator !== "undefined" && navigator.language) ||
+      "en-US"
+    ).toLowerCase();
 
     // Filter to English voices
-    const englishVoices = voices.filter(
-      (v) => v.lang && v.lang.toLowerCase().startsWith("en")
+    const englishVoices = rawVoices.filter(
+      (v) => v && v.lang && v.lang.toLowerCase().startsWith("en")
     );
-    const pool = englishVoices.length > 0 ? englishVoices : voices;
+    const pool = englishVoices.length > 0 ? englishVoices : rawVoices;
 
-    // 1. First priority: Modern Neural / Enhanced / Natural / Premium voices
-    // (e.g. Edge "Natural", Chrome "Google US English", Apple Siri "Enhanced" / "Premium")
+    // 1. Priority: Modern Neural / Enhanced / Natural voice matching user's specific locale
+    const localizedNeural = pool.find((v) => {
+      const lang = (v.lang || "").toLowerCase();
+      const name = (v.name || "").toLowerCase();
+      const isNeural =
+        name.includes("natural") ||
+        name.includes("enhanced") ||
+        name.includes("premium") ||
+        name.includes("neural") ||
+        name.includes("online (natural)");
+      return isNeural && (lang === userLang || lang.startsWith(userLang.slice(0, 2)));
+    });
+    if (localizedNeural) return localizedNeural;
+
+    // 2. Priority: Any Modern Neural / Enhanced / Natural / Premium voice in the pool
     const neuralVoice = pool.find((v) => {
       const name = (v.name || "").toLowerCase();
       return (
@@ -395,7 +429,7 @@ export function getNaturalEnglishVoice() {
     });
     if (neuralVoice) return neuralVoice;
 
-    // 2. Second priority: Preferred high-clarity contemporary voices
+    // 3. Priority: Preferred high-clarity contemporary voices
     const preferredNames = [
       "Ava",
       "Zoe",
@@ -422,7 +456,7 @@ export function getNaturalEnglishVoice() {
       if (match) return match;
     }
 
-    // 3. Fallback: Any English voice that is NOT an old novelty / robotic synthesizer
+    // 4. Priority: Any English voice that is NOT an old novelty / robotic synthesizer
     const roboticNames = [
       "bad news", "bahh", "bells", "boing", "bubbles", "cellos",
       "deranged", "fred", "good news", "hysterical", "junior",
@@ -435,7 +469,8 @@ export function getNaturalEnglishVoice() {
     });
     if (cleanEnglish) return cleanEnglish;
 
-    return pool[0] || null;
+    // 5. Fallback: Default system voice or first available voice in pool
+    return pool.find((v) => v.default) || pool[0] || rawVoices[0] || null;
   } catch (e) {
     console.warn("Error retrieving browser speech voices:", e);
     return null;

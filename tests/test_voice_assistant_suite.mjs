@@ -29,6 +29,7 @@ import {
   createVoiceAgentUtterance,
   isSpeechRecognitionSupported,
   isSpeechSynthesisSupported,
+  getNaturalEnglishVoice,
   speakText,
   stopSpeaking,
 } from "../src/features/assistant/services/voiceService.js";
@@ -371,8 +372,33 @@ Here are the users enrolled in the Basic plan:
   assert(voiceAgentSpoken.includes("on your screen"), "Spoken output informs user full data is on screen");
   console.log(`✓ Test 17 Passed: Voice agent generated: "${voiceAgentSpoken}"\n`);
 
+  // Test 18: Voice selection preferring natural / high-clarity English voices and matching user language
+  console.log("TEST 18: Verifying getNaturalEnglishVoice selection with preference & user language matching...");
+  const selectedVoice = getNaturalEnglishVoice("en-US");
+  assert(selectedVoice, "A voice should be selected from mock voices");
+  assert(selectedVoice.name === "Google US English" || selectedVoice.name === "Samantha", "Should prefer high-clarity contemporary voice");
+  console.log(`✓ Test 18 Passed: Selected natural voice "${selectedVoice.name}" (${selectedVoice.lang})\n`);
+
+  // Test 19: Handling empty voice list gracefully (voices not loaded yet or asynchronous loading)
+  console.log("TEST 19: Verifying getNaturalEnglishVoice handles empty voice list without throwing...");
+  const origGetVoices = mockSpeechSynthesis.getVoices;
+  mockSpeechSynthesis.getVoices = () => [];
+  const emptyVoiceResult = getNaturalEnglishVoice();
+  assert.strictEqual(emptyVoiceResult, null, "Should return null safely when voice list is empty");
+  mockSpeechSynthesis.getVoices = origGetVoices;
+  console.log("✓ Test 19 Passed: Empty voice list gracefully returns null without crashing\n");
+
+  // Test 20: Handling environment where speechSynthesis is unavailable
+  console.log("TEST 20: Verifying getNaturalEnglishVoice handles missing speechSynthesis without throwing...");
+  const origSynth = global.window.speechSynthesis;
+  delete global.window.speechSynthesis;
+  const noSynthResult = getNaturalEnglishVoice();
+  assert.strictEqual(noSynthResult, null, "Should return null safely when speechSynthesis is unavailable");
+  global.window.speechSynthesis = origSynth;
+  console.log("✓ Test 20 Passed: Missing speechSynthesis gracefully returns null\n");
+
   console.log("======================================================================");
-  console.log("=== ALL 17 VOICE ASSISTANT & REAL-TIME VOICE AGENT SCENARIOS PASSED ===");
+  console.log("=== ALL 20 VOICE ASSISTANT & REAL-TIME VOICE AGENT SCENARIOS PASSED ===");
   console.log("======================================================================\n");
 }
 

@@ -44,16 +44,43 @@ export function useVoiceAssistant({
   const isRecognitionSupported = isSpeechRecognitionSupported();
   const isSynthesisSupported = isSpeechSynthesisSupported();
 
-  // Pre-load natural voices on initialization
+  // Pre-load natural voices on initialization and handle async voice loading
   useEffect(() => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
-      getNaturalEnglishVoice();
-      const onVoices = () => {
+      try {
         getNaturalEnglishVoice();
+      } catch (err) {
+        console.warn("Speech synthesis initialization note:", err);
+      }
+
+      const onVoices = () => {
+        try {
+          getNaturalEnglishVoice();
+        } catch (err) {
+          console.warn("voiceschanged event handler note:", err);
+        }
       };
-      window.speechSynthesis.addEventListener?.("voiceschanged", onVoices);
+
+      try {
+        if (typeof window.speechSynthesis.addEventListener === "function") {
+          window.speechSynthesis.addEventListener("voiceschanged", onVoices);
+        } else {
+          window.speechSynthesis.onvoiceschanged = onVoices;
+        }
+      } catch {
+        window.speechSynthesis.onvoiceschanged = onVoices;
+      }
+
       return () => {
-        window.speechSynthesis.removeEventListener?.("voiceschanged", onVoices);
+        try {
+          if (typeof window.speechSynthesis.removeEventListener === "function") {
+            window.speechSynthesis.removeEventListener("voiceschanged", onVoices);
+          } else if (window.speechSynthesis.onvoiceschanged === onVoices) {
+            window.speechSynthesis.onvoiceschanged = null;
+          }
+        } catch {
+          // Ignore cleanup errors
+        }
       };
     }
   }, []);
