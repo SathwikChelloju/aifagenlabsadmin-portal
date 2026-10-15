@@ -776,15 +776,18 @@ export function parseIntentDeterministically(prompt = "", activePage = "dashboar
     };
   }
 
-  // 9. AI Costs: Month-over-Month Comparison
+  // 9. AI Costs & Usage: Month-over-Month Comparison & Telemetry Reports
   if (
-    (lower.includes("ai cost") || lower.includes("ai usage") || lower.includes("token") || lower.includes("llm")) &&
-    (lower.includes("compare") || lower.includes("month") || lower.includes("last month") || lower.includes("spend") || lower.includes("budget"))
+    lower.includes("report of a usage") ||
+    lower.includes("report of ai usage") ||
+    (lower.includes("usage") && lower.includes("report")) ||
+    ((lower.includes("ai cost") || lower.includes("ai usage") || lower.includes("token") || lower.includes("llm") || lower.includes("compute") || (lower.includes("ai") && lower.includes("usage"))) &&
+     (lower.includes("compare") || lower.includes("month") || lower.includes("last month") || lower.includes("spend") || lower.includes("budget") || lower.includes("report") || lower.includes("generate") || lower.includes("breakdown") || lower.includes("cost") || lower.includes("usage") || lower.includes("show")))
   ) {
     return {
       tool: "compare_ai_costs",
       params: { compareMonths: true, currentMonth: "2026-10", prevMonth: "2026-09" },
-      reasoning: "User asked for month-over-month AI token compute cost comparison.",
+      reasoning: "User asked for AI compute usage and cost report/comparison.",
     };
   }
 
@@ -1276,7 +1279,9 @@ export async function executeDeterministicFallback({ query, activePage, history 
  */
 async function executeGroqAgentLoop({ query, activePage = "dashboard", history = [], apiKey }) {
   const endpoint = "https://api.groq.com/openai/v1/chat/completions";
-  const model = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
+  const configuredModel = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+  // Normalize invalid/placeholder model names to Groq's official production model
+  let model = configuredModel === "openai/gpt-oss-120b" ? "llama-3.3-70b-versatile" : configuredModel;
 
   // Step 1: Collect application context from JavaScript source files and mock stores
   const { contextText, structuredResult, detectedTool } =
@@ -1338,8 +1343,8 @@ ${contextText}`,
   // Step 3: Append current user question
   formattedMessages.push({ role: "user", content: query });
 
-  // Step 4: Single direct call to Groq with full context
-  const res = await callGroqWithRetry(fetch, endpoint, {
+  // Step 4: Call Groq with full context
+  let res = await callGroqWithRetry(fetch, endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -1352,6 +1357,24 @@ ${contextText}`,
       max_tokens: 1024,
     }),
   }, 2);
+
+  // If initial model had an error (e.g. 404 model not found or decommissioned), try fallback model llama-3.1-8b-instant
+  if (!res.ok && res.status === 404 && model !== "llama-3.1-8b-instant") {
+    model = "llama-3.1-8b-instant";
+    res = await callGroqWithRetry(fetch, endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model,
+        messages: formattedMessages,
+        temperature: 0.2,
+        max_tokens: 1024,
+      }),
+    }, 1);
+  }
 
   if (!res.ok) {
     let errMessage = `HTTP ${res.status}`;
@@ -1407,7 +1430,10 @@ export function processChatWithAi({ query = "", activePage = "dashboard", histor
   }
 
   const promise = (async () => {
-    const groqKey = process.env.GROQ_API_KEY;
+    const groqKey =
+      (typeof process !== "undefined" && process.env?.GROQ_API_KEY) ||
+      (typeof import.meta !== "undefined" && import.meta.env?.VITE_GROQ_API_KEY) ||
+      (typeof window !== "undefined" && window.__AIFA_GROQ_KEY__);
     const isGroqPlaceholder = !groqKey || groqKey.startsWith("your_") || groqKey.includes("placeholder");
 
     if (!isGroqPlaceholder) {

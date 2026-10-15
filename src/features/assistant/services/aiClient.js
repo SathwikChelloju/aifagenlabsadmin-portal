@@ -15,7 +15,7 @@
  */
 
 import { executeTool, validateRecordsAgainstSource } from "./toolRegistry.js";
-import { parseIntentDeterministically } from "../../../../server/aiService.js";
+import { parseIntentDeterministically, processChatWithAi } from "../../../../server/aiService.js";
 
 export class AiAssistantClient {
   constructor(endpoint = "/api/assistant/interpret") {
@@ -33,7 +33,8 @@ export class AiAssistantClient {
         body: JSON.stringify({ query, activePage, history }),
       });
 
-      if (res.ok) {
+      const contentType = res.headers.get("content-type") || "";
+      if (res.ok && contentType.includes("application/json")) {
         interpreted = await res.json();
       }
     } catch {
@@ -41,7 +42,20 @@ export class AiAssistantClient {
       interpreted = null;
     }
 
-    // 2. If backend responded with conversational text or structured tool result
+    // 2. Direct client-side AI fallback if backend endpoint was unreachable or returned non-JSON
+    // Enables live Groq inference on static hosting, Vercel SPA deployments, and preview environments
+    if (!interpreted) {
+      try {
+        const directResult = await processChatWithAi({ query, activePage, history });
+        if (directResult && (directResult.text || directResult.summary || directResult.structured)) {
+          interpreted = directResult;
+        }
+      } catch (err) {
+        console.warn("[AiAssistantClient] Direct AI fallback note:", err?.message);
+      }
+    }
+
+    // 3. If backend or direct model responded with conversational text or structured tool result
     if (interpreted && (interpreted.text || interpreted.summary || interpreted.structured)) {
       let validatedStructured = interpreted.structured;
       if (validatedStructured && Array.isArray(validatedStructured.rows)) {
@@ -59,7 +73,7 @@ export class AiAssistantClient {
         tool: interpreted.tool || "conversation",
         aiMetadata: interpreted.aiMetadata || {
           provider: interpreted.provider || "groq",
-          model: interpreted.model || "Groq (openai/gpt-oss-120b)",
+          model: interpreted.model || "Groq (llama-3.3-70b-versatile)",
           isOfflineFallback: interpreted.isOfflineFallback || false,
           reasoning: interpreted.reasoning,
           notice: interpreted.notice,

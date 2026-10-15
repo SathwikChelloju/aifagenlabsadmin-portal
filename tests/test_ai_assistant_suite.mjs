@@ -781,8 +781,37 @@ assert(prompt7Result.summary.includes("Lever Board Collector"), "Must include Le
 assert.strictEqual(prompt7Result.structured.rows.length, 3, "Must display the 3 failed sync executions");
 console.log("  ✓ 18.7 Passed: Accurately reported connector-level ingestion failures and clarified data architecture\n");
 
+// ======================================================================
+// TEST 19: AI USAGE & COST REPORTING QUERIES
+// ======================================================================
+console.log("TEST 19: AI Usage & Telemetry Report Queries...");
+const aiReportQueries = [
+  "can you generate a report of a usage",
+  "can you generate ai report of a usage",
+  "can you generate ai usage report",
+  "generate ai usage report",
+  "ai usage report",
+  "can you generate a report of ai usage",
+];
+
+for (const q of aiReportQueries) {
+  const intent = parseIntentDeterministically(q);
+  assert.strictEqual(
+    intent.tool,
+    "compare_ai_costs",
+    `Query "${q}" must route to compare_ai_costs, got "${intent.tool}"`
+  );
+  assert.strictEqual(intent.params.compareMonths, true);
+}
+
+const aiReportResult = await executeTool("compare_ai_costs", { compareMonths: true });
+assert(aiReportResult.summary.includes("October 2026"), "Report must include October 2026 usage");
+assert(aiReportResult.summary.includes("September 2026"), "Report must include September 2026 comparison");
+assert(aiReportResult.structured.comparison, "Report must include structured comparison data");
+console.log("  ✓ 19.1 Passed: All AI usage and cost report query variations route to compare_ai_costs cleanly\n");
+
 console.log("======================================================================");
-console.log("=== ALL 18 VERIFICATION & REGRESSION SUITES PASSED (100% ACCURACY) ===");
+console.log("=== ALL 19 VERIFICATION & REGRESSION SUITES PASSED (100% ACCURACY) ===");
 console.log("======================================================================");
 
 
