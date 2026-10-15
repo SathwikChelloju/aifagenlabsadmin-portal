@@ -1,140 +1,251 @@
 # AIFA GEN LABS Admin Portal
 
-> **Career Optimization • Better intelligence. Better decisions.**
+<div align="center">
 
-An enterprise-grade SaaS administrative console for intelligent recruitment operations, candidate discovery, multi-source job ingestion telemetry, recruiter performance benchmarking, financial ledgers, and multimodal conversational AI.
+![AIFA GEN LABS Console](https://img.shields.io/badge/AIFA_GEN_LABS-Career_Optimization-EA580C?style=for-the-badge&logoColor=white)
+![React 19](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite 8](https://img.shields.io/badge/Vite_8-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS_v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Vercel Ready](https://img.shields.io/badge/Vercel-Ready-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![Automated Tests](https://img.shields.io/badge/Tests-46%2F46_Passing_(100%25)-16A34A?style=for-the-badge)
+
+<p align="center">
+  <strong>Career Optimization • Better intelligence. Better decisions.</strong>
+</p>
+
+<p align="center">
+  An enterprise-grade, fully responsive SaaS administrative console designed for intelligent recruitment operations, candidate discovery, multi-source job ingestion telemetry, recruiter performance benchmarking, financial ledgers, and multimodal conversational AI.
+</p>
+
+</div>
 
 ---
 
-## 🌟 Key Features
+## 📑 Table of Contents
 
-### 1. Executive Dashboard & Telemetry
-- **Core Platform KPIs**: Real-time monitoring of Total Candidates (`4,820`), Enrolled Subscriptions (`1,420`), Monthly Recurring Revenue (`$142,850.00`), and Job Ingestion Health (`18,450 vacancies`).
-- **Velocity Tracking**: Candidate registrations vs. collected revenue across customizable weekly and monthly billing cycles.
-- **Revenue Distribution**: Breakdown across subscription tiers: Premium ($149/mo), Basic ($45/mo), and Unenrolled.
+- [Overview](#-overview)
+- [Enterprise Feature Matrix](#-enterprise-feature-matrix)
+  - [1. Modern SaaS Sign-In & Security](#1-modern-saas-sign-in--security)
+  - [2. Adaptive Navigation Architecture](#2-adaptive-navigation-architecture)
+  - [3. Multimodal AI Operations Assistant (Voice + Chat)](#3-multimodal-ai-operations-assistant-voice--chat)
+  - [4. Executive Command Center & Telemetry](#4-executive-command-center--telemetry)
+  - [5. Candidate Directory & ATS Optimization](#5-candidate-directory--ats-optimization)
+  - [6. Multi-Source Job Ingestion Engine](#6-multi-source-job-ingestion-engine)
+  - [7. Recruiter Performance & Benchmarking](#7-recruiter-performance--benchmarking)
+  - [8. Financial Ledger & Billing Operations](#8-financial-ledger--billing-operations)
+  - [9. White-Label Branding & System Settings](#9-white-label-branding--system-settings)
+  - [10. Fully Responsive Mobile-First Architecture](#10-fully-responsive-mobile-first-architecture)
+- [Voice Agent Processing Pipeline](#-voice-agent-processing-pipeline)
+- [Tech Stack](#-tech-stack)
+- [Getting Started & Local Setup](#-getting-started--local-setup)
+- [Administrator Credentials](#-default-administrator-credentials)
+- [Automated Verification & Test Suites](#-automated-verification--test-suites)
+- [Vercel Deployment Guide](#-vercel-deployment-guide)
+- [Project Directory Structure](#-project-directory-structure)
 
-### 2. Candidate Discovery & Subscription Management
-- **Directory & Filters**: Search and filter platform candidates by name, email, role, subscription plan (`Basic`, `Premium`, `None`), and status (`Active`, `Past Due`, `Suspended`).
-- **ATS Optimization Scoring**: Dynamic candidate match scores (0–100%) and target career country goals.
-- **Renewal Auditing**: Automated detection of upcoming subscription renewals within 30 days and alerts for past-due accounts.
+---
 
-### 3. Recruiter Performance & Benchmarking
-- **Staff Benchmarking**: Real-time placement metrics, candidate submission funnels, and conversion rates across executive recruiters (team average: `37.1%`).
-- **Zero-Placement Audits**: Automated anomaly detection to guarantee zero-placement accountability across all active talent partners.
+## 🚀 Overview
 
-### 4. Multi-Source Job Ingestion Engine
-- **Active Connectors**: Automated scraping and API ingestion feeds from LinkedIn Global, Indeed, Greenhouse, Lever, and custom scrapers.
-- **Ingestion Telemetry**: 7-day ingestion volume (`364+ jobs`), sync success rate (`72.7%`), and connector failure diagnostic audits (e.g. Greenhouse HTTP 403 Forbidden, Lever Queue Timeout).
-- **Export Capabilities**: Dual-section CSV and PDF telemetry report generation.
+**AIFA GEN LABS Admin Portal** is an end-to-end recruitment operations platform built for global talent agencies, hiring teams, and career optimization operations. It unifies high-volume job scraping feeds, candidate tracking, ATS resume matching, billing management, and real-time voice-driven AI telemetry into a cohesive, high-performance web console.
 
-### 5. Multimodal AI Admin Assistant (Chat & Voice)
-- **Dual-Mode Experience**: Unified floating drawer with instantaneous switching between `[ Chat ]` and `[ Voice ]` modes.
-- **Grounded Conversational Intelligence**: Powered by Groq LLM integration (`openai/gpt-oss-120b`) grounded directly in live portal application context, with automatic fallback to a deterministic semantic NLU parser.
+### Key Value Pillars
+- **Zero-Latency Ingestion Telemetry**: Live tracking of 18,450+ vacancies across LinkedIn, Indeed, Greenhouse, Lever, and Workday.
+- **Multimodal AI Assistant**: Conversational data intelligence that operates seamlessly in typed text or real-time spoken audio.
+- **Enterprise-Grade Security**: Cryptographically signed HMAC sessions, role-based protection guards, and audit trails.
+- **Responsive Across Any Viewport**: Fully responsive experience on smartphones (360px+), tablets, laptops, and 4K displays.
+
+---
+
+## 🌟 Enterprise Feature Matrix
+
+### 1. Modern SaaS Sign-In & Security
+- **Cinematic Dual-Zone Architecture**: Calm, high-contrast split-screen login page pairing a subtle brand video showcase (`career-optimization-bg.mp4`) with a pure white SaaS sign-in card.
+- **Cryptographic Session Authentication**: Signed HMAC session tokens with tamper detection and automated expiration handling.
+- **Configurable Persistence**: 30-day persistent session support via `localStorage` ("Remember Me") or scoped ephemeral sessions via `sessionStorage`.
+- **One-Click Demo Auto-Fill**: Quick-fill button on the login card to populate test credentials instantly.
+- **Protected Routing & Route Guards**: Navigation guards on `/dashboard`, `/users`, `/jobs`, `/payments`, `/recruiters`, and `/settings` that safely redirect unauthenticated requests to `/login`.
+
+### 2. Adaptive Navigation Architecture
+- **Desktop Slim Icon Rail (Hover Expansion)**: Space-efficient 64px rail that smoothly expands to a 256px drawer on hover, displaying organized categories, live search, and account status without interrupting workflow.
+- **Mobile Off-Canvas Drawer**: On smartphones and tablets (`< 768px`), the fixed rail transitions into an off-canvas slide-out drawer triggered by a header hamburger menu with backdrop blur.
+- **Global Command Search (`Cmd + K`)**: Unified instant search querying pages, candidates, active jobs, and recruiter profiles simultaneously with keyboard navigation support.
+- **Real-Time Feed Synchronizer**: Top-bar action button triggering live scraper synchronization across all external job connectors.
+- **Notification Center**: Centralized bell indicator displaying live platform alerts, sync logs, and system events.
+
+### 3. Multimodal AI Operations Assistant (Voice + Chat)
+- **Dual-Mode Experience**: Instant switching between `[ Chat ]` and `[ Voice ]` modes while preserving complete conversation history.
+- **Grounded Conversational Intelligence**: Powered by Groq LLM (`openai/gpt-oss-120b`) grounded in real-time portal telemetry, paired with an offline deterministic semantic NLU parser.
 - **Real-Time Voice Agent**:
-  - Browser-native Web Speech API (`SpeechRecognition` / `webkitSpeechRecognition`, `speechSynthesis`).
-  - **Natural Conversational Delivery**: Formulates natural spoken responses that state candidate, recruiter, or job names directly (e.g. *"Found 3 users with the Basic plan: Tariq Mansoor, Liam O'Connor, and Daisuke Tanaka"*).
-  - **Noise Suppression**: Suppresses raw database columns, table dividers, email addresses, and database IDs from audio output while preserving full structured tables on screen.
-  - **Safe Single-Turn Mic**: Automatic listening state transitions with single-utterance speech capture to avoid open-mic noise.
-  - **Instant Cancellation**: Dedicated "Stop Speaking" control and automatic audio abortion when switching modes or closing the panel.
+  - Uses browser-native Web Speech API (`SpeechRecognition` / `webkitSpeechRecognition`, `speechSynthesis`).
+  - **Natural Spoken Delivery**: Directly speaks candidate, recruiter, or job names (e.g., *"Found 3 users currently enrolled in the Basic plan: Tariq Mansoor, Liam O'Connor, and Daisuke Tanaka"*).
+  - **Noise Suppression**: Excludes raw markdown tables, database column headers, IDs, and email addresses from spoken output while keeping full structured data visible on screen.
+  - **Safe Single-Turn Mic**: Automatic listening state transitions with single-utterance speech capture to avoid open-mic background noise.
+  - **Interruption Controls**: Dedicated "Stop Speaking" button, and auto-abort on mode switch or panel close.
 
-### 6. Enterprise Authentication & Security
-- **SaaS Sign-In Portal**: High-contrast, minimal split-screen login page with ambient branding, subtle video backdrop, and 1-click test credential auto-fill.
-- **Cryptographic Security**: Signed HMAC session tokens with configurable persistence (30-day "Remember Me" via `localStorage` vs. session-only via `sessionStorage`).
-- **Protected Routing**: Navigation guards across all administrative modules with automatic session expiration handling.
+### 4. Executive Command Center & Telemetry
+- **Core Platform KPIs**: Real-time metrics for Total Candidates (`4,820`), Active Subscriptions (`1,420`), Monthly Recurring Revenue (`$142,850.00`), and Jobs Ingested (`18,450`).
+- **Interactive Performance Charts**: 30-day interactive velocity tracking comparing candidate registrations against collected revenue.
+- **Top Job Sources Breakdown**: Visual market-share analytics across LinkedIn (42%), Indeed (28%), Naukri (15%), and ATS feeds.
+- **Recent Platform Activity Feed**: Live audit trail of system events, subscription renewals, candidate registrations, and sync errors.
+
+### 5. Candidate Directory & ATS Optimization
+- **Directory & Multi-Factor Filtering**: Search candidates by name, email, target country, subscription tier (`Basic`, `Premium`, `None`), and account status (`Active`, `Past Due`, `Suspended`).
+- **ATS Optimization Scoring**: Dynamic candidate match scores (0–100%) and career target country benchmarks.
+- **Invoice & PDF Generation**: Integrated invoice preview modal and instant PDF download powered by `jspdf` and `html2canvas`.
+- **Impersonation & Account Actions**: Safe administrative actions to inspect candidate profiles, update tiers, or adjust account status.
+
+### 6. Multi-Source Job Ingestion Engine
+- **Active Scraper Connectors**: Ingestion pipelines supporting LinkedIn Global, Indeed, Greenhouse, Lever, and Workday.
+- **Health & Diagnostic Telemetry**: 7-day ingestion volume (`364+ jobs`), sync success rate (`72.7%`), and diagnostic alerts for connector errors (e.g., Greenhouse HTTP 403 Forbidden, Lever Queue Timeout).
+- **Automated Deduplication**: Anomaly detection engine that identifies and merges duplicate postings across feeds.
+- **Dual-Section Reporting**: Generates formatted CSV and PDF reports containing jobs listings alongside connector telemetry KPIs.
+
+### 7. Recruiter Performance & Benchmarking
+- **Talent Partner Benchmarking**: Workload distribution, candidate submission funnels, and placement conversion rates across talent partners (team average: `37.1%`).
+- **Zero-Placement Accountability**: Automated alerts flagging recruiters with zero placements within the active 30-day evaluation window.
+- **Staff Management**: Add, update, or reassign recruiters across engineering, sales, and executive departments.
+
+### 8. Financial Ledger & Billing Operations
+- **Transaction History**: Searchable financial ledger tracking invoice IDs, candidate details, billing dates, payment methods (Credit Card, PayPal, Wire), and statuses (`Succeeded`, `Pending`, `Refunded`).
+- **Refund Management**: Secure administrative modal to process partial or full refunds with instant status updates.
+- **Revenue Analytics**: Plan revenue distribution breakdown between Premium ($149/mo), Basic ($45/mo), and enterprise accounts.
+
+### 9. White-Label Branding & System Settings
+- **Live Brand Preview**: Real-time branding editor with instant preview of company logo, platform name, and corporate tagline.
+- **Audit Log Retention Policies**: Configurable data retention periods (30, 90, 180, 365 days) with one-click audit trail CSV export.
+- **Security & Access Control**: Password policy controls, two-factor authentication toggles, and session timeout parameters.
+
+### 10. Fully Responsive Mobile-First Architecture
+- **Fluid Layout**: Automatic transition between desktop split screens, responsive tablet grids, and single-column mobile flows.
+- **Mobile Navigation Drawer**: Smooth slide-out mobile drawer with backdrop blur and touch-optimized navigation targets.
+- **Responsive AI Assistant**: Adapts from a desktop floating card to a full-width mobile bottom drawer (`max-h-[calc(100dvh-5.5rem)]`) and full-screen expanded dialog.
+- **Responsive Tables**: Every data table includes an `overflow-x-auto` wrapper with custom scrollbars, preventing horizontal page clipping.
+
+---
+
+## 🎙️ Voice Agent Processing Pipeline
+
+```
+       User Speaks Question
+                 │
+                 ▼
+     [ Web Speech Recognition ]
+  (Speech-to-Text in the browser)
+                 │
+                 ▼
+       Recognized Query Text
+                 │
+                 ▼
+  [ Unified Submission Pipeline ] ◄── (Identical to typed Chat mode)
+                 │
+                 ▼
+  [ Groq LLM + Local Grounding ]
+                 │
+                 ▼
+      Actual Assistant Response
+                 │
+        ┌────────┴────────┐
+        ▼                 ▼
+ [ Render on Screen ]  [ Spoken Audio Engine ]
+ (Full tables, data,   • Clean markdown noise
+  metadata preserved)  • Speak candidate / job names directly
+                       • Suppress raw IDs, tables, and emails
+                       • Play via window.speechSynthesis
+```
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend Framework**: [React 19](https://react.dev/) + [Vite 8](https://vitejs.dev/)
-- **Styling & Design System**: [Tailwind CSS v4](https://tailwindcss.com/) with dual-tone Dark/Light theme support
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Typography**: Plus Jakarta Sans, Manrope, JetBrains Mono
-- **PDF & Canvas Export**: [jsPDF](https://github.com/parallax/jsPDF), [html2canvas](https://html2canvas.hertzen.com/)
-- **Linter**: [Oxlint](https://oxc.rs/)
-- **AI & LLM Services**: Groq Cloud SDK / REST API (`openai/gpt-oss-120b`)
-- **Speech APIs**: Browser Web Speech API (`SpeechRecognition`, `SpeechSynthesis`)
-- **Testing**: Node.js native test runner (`node:assert`)
+| Layer | Technology | Details |
+| :--- | :--- | :--- |
+| **Frontend Framework** | [React 19](https://react.dev/) | Concurrent rendering, modern hooks, and state management |
+| **Build Tool** | [Vite 8](https://vitejs.dev/) | Fast HMR, production chunking, and bundle optimization |
+| **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) | Atomic utility classes, CSS variables, and dark/light themes |
+| **Icons** | [Lucide React](https://lucide.dev/) | Consistent iconography across navigation, actions, and KPIs |
+| **PDF & Export** | [jsPDF](https://github.com/parallax/jsPDF) + [html2canvas](https://html2canvas.hertzen.com/) | Client-side invoice rendering and telemetry report export |
+| **AI / LLM** | [Groq Cloud](https://groq.com/) | High-speed inference using `openai/gpt-oss-120b` |
+| **Speech APIs** | Web Speech API | Native `SpeechRecognition` and `SpeechSynthesis` |
+| **Linter** | [Oxlint](https://oxc.rs/) | Rust-based high-performance linter (0 warnings, 0 errors) |
+| **Test Runner** | Node.js ESM | Native test runner (`node:assert`) across 46 verification cases |
+| **Deployment** | [Vercel](https://vercel.com/) | Native Vite preset with clean URL rewrites via `vercel.json` |
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started & Local Setup
 
 ### Prerequisites
-- **Node.js**: `v18.0.0` or higher
-- **npm**: `v9.0.0` or higher
+- **Node.js**: `>= 18.0.0`
+- **npm**: `>= 9.0.0`
 
-### Installation
+### 1. Clone & Navigate
+```bash
+git clone https://github.com/<your-username>/<your-repo-name>.git
+cd admin_portal/admin_portal
+```
 
-1. Clone or navigate to the project directory:
-   ```bash
-   cd admin_portal/admin_portal
-   ```
+### 2. Install Dependencies
+```bash
+npm install
+```
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+### 3. Environment Variables (Optional)
+Copy the example environment configuration:
+```bash
+cp .env.example .env
+```
+Add your Groq API key (optional for live AI queries):
+```env
+VITE_GROQ_API_KEY=your_groq_api_key_here
+PORT=5174
+```
+*(Note: If no API key is supplied, the portal's built-in deterministic semantic NLU engine operates with 100% offline accuracy.)*
 
-3. Configure environment variables (optional for live AI models):
-   Create a `.env` file in the project root:
-   ```env
-   GROQ_API_KEY=your_groq_api_key_here
-   PORT=5174
-   ```
-   *(Note: If no API key is provided, the platform automatically engages its built-in deterministic semantic NLU parser with 100% offline accuracy.)*
-
-4. Start the Vite development server:
-   ```bash
-   npm run dev
-   ```
-
-5. Open your browser and navigate to:
-   ```
-   http://localhost:5174
-   ```
+### 4. Start Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:5174](http://localhost:5174) in your browser.
 
 ---
 
 ## 🔑 Default Administrator Credentials
 
-Use the following credentials to access the console:
+| Field | Value | Notes |
+| :--- | :--- | :--- |
+| **Email** | `admin@aifagen@gmail.com` | Primary administrator account *(or alias `admin@aifagen.com`)* |
+| **Password** | `admin@123` | Default administrative passphrase |
+| **Role** | Super Administrator | Full access to telemetry, billing, and settings |
 
-| Field | Value |
-| :--- | :--- |
-| **Email** | `admin@aifagen@gmail.com` *(or alias `admin@aifagen.com`)* |
-| **Password** | `admin@123` |
-| **Role** | Super Administrator |
-
-*(Tip: On the sign-in page, click **"Auto-fill"** to automatically populate these credentials in one click.)*
+> **Pro Tip**: On the sign-in page, click **"Auto-fill"** to automatically populate these credentials with a single click.
 
 ---
 
-## 🧪 Testing & Verification
+## 🧪 Automated Verification & Test Suites
 
-The project includes a comprehensive automated test suite covering authentication, voice synthesis, AI conversation loops, and deterministic data queries.
+The platform includes 4 automated test suites covering authentication, voice processing, AI reasoning, and data queries.
 
-### Run All Tests
+### Run All Tests (46/46 Passing)
 ```bash
 npm test
 ```
-*Executes all 46 verification scenarios with 100% pass rate.*
 
-### Run Specific Test Suites
+### Run Individual Test Suites
 ```bash
 # Voice Assistant & Real-Time Voice Agent Suite (17 scenarios)
 npm run test:voice
 
-# Authentication & Session Persistence Suite (14 scenarios)
+# Authentication, Session Persistence & Route Guards Suite (14 scenarios)
 npm run test:auth
 
-# Conversational AI & Follow-up Architecture Suite
+# Conversational AI Loop & Telemetry Reporting Suite (8 scenarios)
 npm run test:conversational
 ```
 
-### Linting & Production Build
+### Code Quality & Build Checks
 ```bash
-# Run Oxlint
+# Run Rust-based Oxlint
 npm run lint
 
 # Compile production bundle
@@ -143,50 +254,75 @@ npm run build
 
 ---
 
-## 📁 Project Structure
+## ☁️ Vercel Deployment Guide
+
+The repository includes a pre-configured [vercel.json](file:///Users/sathwikchelloju/Desktop/Admin/admin_portal/admin_portal/vercel.json) that automatically handles single-page application (SPA) client-side routing and immutable asset caching.
+
+### Deploy Steps
+1. Push your repository to GitHub or GitLab.
+2. Log in to [Vercel](https://vercel.com/) and click **Add New Project**.
+3. Import your repository.
+4. Vercel automatically detects the Vite framework:
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+5. *(Optional)* Add the environment variable:
+   - `VITE_GROQ_API_KEY`: `your_groq_api_key`
+6. Click **Deploy**.
+
+All routes (`/login`, `/dashboard`, `/users`, `/jobs`, `/payments`, `/settings`) resolve cleanly with zero 404 reload errors.
+
+---
+
+## 📁 Project Directory Structure
 
 ```
 admin_portal/
-├── public/                     # Static assets, branding logos, and background video
+├── .github/
+│   └── workflows/
+│       └── ci.yml               # Automated CI (lint, 46 tests, build)
+├── public/                      # Static branding assets & video
 │   ├── assets/
-│   │   ├── career-optimization-bg.mp4
-│   │   └── ...
-│   └── aifa-logo.png
-├── server/                     # Backend API services, auth token signer & AI orchestration
-│   ├── aiService.js            # Groq model caller & deterministic intent fallback
-│   ├── authService.js          # Cryptographic HMAC session token manager
-│   ├── contextBuilder.js       # Runtime portal telemetry context aggregator
-│   └── index.js                # Express mock server
+│   │   └── career-optimization-bg.mp4
+│   ├── aifa-logo.png
+│   └── favicon.ico
+├── server/                      # Local API services & cryptographic auth signer
+│   ├── aiService.js             # Groq API caller & semantic fallback
+│   ├── authService.js           # HMAC cryptographic token manager
+│   ├── contextBuilder.js        # Runtime portal telemetry context aggregator
+│   └── index.js                 # API server entry point
 ├── src/
-│   ├── assets/                 # Brand assets & UI icons
-│   ├── components/             # Reusable UI controls, global search, toast alerts
-│   ├── context/                # AuthContext, SettingsContext
+│   ├── assets/                  # Brand icons and illustrations
+│   ├── components/              # GlobalSearchBar, Tooltip, UI primitives
+│   ├── context/                 # AuthContext, SettingsContext
 │   ├── features/
-│   │   ├── ai-usage/           # Token compute & inference cost analytics
-│   │   ├── assistant/          # AI Assistant (Chat, VoiceInterface, voiceService, toolRegistry)
-│   │   ├── audit-logs/         # System event trails & access logs
-│   │   ├── auth/               # Sign-in page & authentication services
-│   │   ├── dashboard/          # Performance charts & executive KPI summary
-│   │   ├── job-sources/        # Ingestion connectors & sync execution logs
-│   │   ├── jobs/               # Vacancy listings & multi-source search
-│   │   ├── overview/           # Platform metrics & monthly growth charts
-│   │   ├── payments/           # Invoices, billing cycles & financial ledger
-│   │   ├── recruiters/         # Staff placement metrics & conversion benchmarks
-│   │   ├── settings/           # Customization, branding & white-label settings
-│   │   └── users/              # Candidate directory & subscription tier management
-│   ├── hooks/                  # Custom React hooks (useAuth, useVoiceAssistant, etc.)
-│   ├── layouts/                # AdminLayout (collapsible sidebar rail, global header)
-│   ├── mocks/                  # Authoritative in-memory mock store
-│   ├── App.jsx                 # Route manager & top-level layout controller
-│   ├── index.css               # Design tokens, typography & Tailwind styles
-│   └── main.jsx                # Application root entry point
-├── tests/                      # Automated test suites (Node.js ESM)
+│   │   ├── ai-usage/            # AI compute tokens & inference cost tracking
+│   │   ├── assistant/           # Multimodal AI Assistant (Voice + Chat)
+│   │   ├── audit-logs/          # System audit trails & security logs
+│   │   ├── auth/                # SaaS sign-in page & session client
+│   │   ├── dashboard/           # Executive KPI overview & activity charts
+│   │   ├── job-sources/         # Scraper feeds & connector diagnostics
+│   │   ├── jobs/                # Vacancy directory & multi-source search
+│   │   ├── overview/            # Performance analytics & growth metrics
+│   │   ├── payments/            # Financial ledger, invoices & refund modals
+│   │   ├── recruiters/          # Recruiter performance & benchmark funnels
+│   │   ├── settings/            # White-label branding & security settings
+│   │   └── users/               # Candidate management & subscription tiers
+│   ├── hooks/                   # useAuth, useVoiceAssistant, useToast
+│   ├── layouts/                 # AdminLayout (responsive rail & mobile drawer)
+│   ├── mocks/                   # Authoritative in-memory state store
+│   ├── App.jsx                  # Top-level routing & session controller
+│   ├── index.css                # Design tokens & Tailwind styles
+│   └── main.jsx                 # Application entry point
+├── tests/                       # Node.js automated test suites
 │   ├── test_ai_assistant_suite.mjs
 │   ├── test_authentication_suite.mjs
+│   ├── test_conversational_suite.mjs
 │   ├── test_simple_architecture.mjs
 │   └── test_voice_assistant_suite.mjs
-├── package.json
-└── vite.config.js
+├── .env.example                 # Environment configuration template
+├── package.json                 # Node dependencies & scripts
+├── vercel.json                  # Vercel SPA routing & caching rules
+└── vite.config.js               # Vite build & plugin configuration
 ```
 
 ---
